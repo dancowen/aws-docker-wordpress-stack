@@ -1,0 +1,38 @@
+version: "3"
+services:
+
+  wordpress:
+    image: wordpress:latest
+    ports:
+      - 80:80
+    networks:
+      - backend
+    environment:
+      WORDPRESS_DB_USER: wp
+      WORDPRESS_DB_PASSWORD: some_secret_password
+    volumes:
+      - data-volume:/var/www/html/wp-content
+
+  mysql:
+    image: mysql:5.7
+    ports:
+      - 3306:3306
+    networks:
+      - backend
+    environment:
+      MYSQL_ROOT_PASSWORD: some_secret_root_password
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wp 
+      MYSQL_PASSWORD: some_secret_password
+    volumes:
+      - data-volume:/var/lib/mysql
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+networks:
+  backend:
+
+volumes:
+  data-volume:
